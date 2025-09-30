@@ -1,0 +1,19 @@
+main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.app-title {
+  font-weight: 500;
+  font-size: 1.2em;
+}
+
+editor {
+  flex: 1;
+  display: flex;
+}

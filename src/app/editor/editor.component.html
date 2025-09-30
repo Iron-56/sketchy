@@ -1,0 +1,114 @@
+<div class="svg-editor-container">
+
+  <mat-toolbar class="editor-toolbar">
+    <div class="tool-section">
+      <span class="toolbar-label">Tools:</span>
+      @for (tool of tools; track tool.type) {
+        <button 
+          mat-icon-button 
+          [color]="currentTool() === tool.type ? 'accent' : 'basic'"
+          (click)="selectTool(tool.type)"
+          [title]="tool.name">
+          <mat-icon>{{ tool.icon }}</mat-icon>
+        </button>
+      }
+    </div>
+
+    <mat-toolbar-row class="second-row">
+      <div class="control-section">
+        <span class="control-label">Stroke Width:</span>
+        <mat-slider 
+          min="1" 
+          max="10" 
+          step="1">
+          <input matSliderThumb [value]="strokeWidth()" (valueChange)="setStrokeWidth($event)">
+        </mat-slider>
+        <span class="value-display">{{ strokeWidth() }}px</span>
+      </div>
+
+      <!-- Fill Color -->
+      <div class="color-section">
+        <span class="control-label">Fill:</span>
+        <div class="color-palette">
+          @for (color of colors; track color) {
+            <button 
+              class="color-button"
+              [style.background-color]="color"
+              [class.selected]="fillColor() === color"
+              (click)="setFillColor(color)"
+              [title]="color">
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Stroke Color -->
+      <div class="color-section">
+        <span class="control-label">Stroke:</span>
+        <div class="color-palette">
+          @for (color of colors; track color) {
+            <button 
+              class="color-button"
+              [style.background-color]="color"
+              [class.selected]="strokeColor() === color"
+              (click)="setStrokeColor(color)"
+              [title]="color">
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-section">
+        <button 
+          mat-icon-button 
+          (click)="toggleTheme()" 
+          [title]="isDarkTheme() ? 'Switch to Light Theme' : 'Switch to Dark Theme'">
+          <mat-icon>{{ isDarkTheme() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        </button>
+        <button mat-raised-button (click)="undo()" title="Undo">
+          <mat-icon>undo</mat-icon>
+          Undo
+        </button>
+        <button mat-raised-button (click)="clearCanvas()" title="Clear All">
+          <mat-icon>clear</mat-icon>
+          Clear
+        </button>
+        <button mat-raised-button color="primary" (click)="exportSVG()" title="Export SVG">
+          <mat-icon>download</mat-icon>
+          Export
+        </button>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="canvas-container">
+    <svg 
+      #svgCanvas 
+      class="svg-canvas"
+      [attr.data-tool]="currentTool()"
+      width="100%" 
+      height="600"
+      xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" [attr.stroke]="isDarkTheme() ? '#404040' : '#e0e0e0'" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
+  </div>
+
+  <div class="status-bar">
+    <span>Current Tool: {{ getCurrentToolName() }}</span>
+    <span>Fill: {{ fillColor() }}</span>
+    <span>Stroke: {{ strokeColor() }} ({{ strokeWidth() }}px)</span>
+    @if (currentTool() === 'select' && selectedElements.length > 0) {
+      <span class="selection-info">Selected: {{ selectedElements.length }} element(s) | Press Delete to remove</span>
+    }
+    @if (isDrawing()) {
+      <span class="drawing-indicator">Drawing...</span>
+    }
+  </div>
+
+</div>
